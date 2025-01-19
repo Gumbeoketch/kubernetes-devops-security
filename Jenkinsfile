@@ -16,7 +16,7 @@ pipeline {
         }
        stage('Docker Buuld and Push') {
             steps {
-              withDockerResgistry([credentialsId: "docker-hub", url: ""]) {
+              withDockerResgistry([credentialsId: "docker.hub", url: ""]) {
               sh 'printenv'
               sh 'docker build -t moketch/numeric-app:""$GIT_COMMIT"" .'
               sh 'docker push moketch/numeric-app:""$GIT_COMMIT""'
