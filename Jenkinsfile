@@ -40,6 +40,7 @@ pipeline {
 
             }
             }
+       }
     
     
     stage('Kubernetes Deployment - DEV') {
@@ -52,3 +53,4 @@ pipeline {
   
     }
 }
+    }
