@@ -26,6 +26,7 @@ pipeline {
        }
     stage('Sonarqube SAST') {
             steps {
+              withSonarQubeEnv('SonarQube')
               sh "mvn clean verify sonar:sonar \
   -Dsonar.projectKey=numeric-application \
   -Dsonar.projectName='numeric-application' \
@@ -33,6 +34,11 @@ pipeline {
   -Dsonar.token=sqp_cff98574ffb36113e6c5e72ea46dc7707b9a3209"
 
             }
+      timeout(time: 2, unit: 'MINUTES') {
+        script {
+          waitForQualityGate abortPipeline: true
+        }
+      }
     }
     stage('Kubernetes Deployment - DEV') {
             steps {
