@@ -14,16 +14,7 @@ pipeline {
               sh "mvn test"
             }
         }
-       stage('Docker Buuld and Push') {
-            steps {
-            withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
-              sh 'printenv'
-              sh 'docker build -t moketch/numeric-app:""$GIT_COMMIT"" .'
-              sh 'docker push moketch/numeric-app:""$GIT_COMMIT""'
-
-            }
-            }
-       }
+    
     stage('Sonarqube SAST') {
             steps {
               withSonarQubeEnv('SonarQube') {
@@ -40,6 +31,17 @@ pipeline {
         }
       }
     }
+       stage('Docker Buuld and Push') {
+            steps {
+            withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
+              sh 'printenv'
+              sh 'docker build -t moketch/numeric-app:""$GIT_COMMIT"" .'
+              sh 'docker push moketch/numeric-app:""$GIT_COMMIT""'
+
+            }
+            }
+       }
+    
     stage('Kubernetes Deployment - DEV') {
             steps {
               withKubeConfig([credentialsId: 'kubeconfig']) {
