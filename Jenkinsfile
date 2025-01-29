@@ -32,13 +32,8 @@ pipeline {
   -Dsonar.host.url=http://13.247.56.111:9000 \
   -Dsonar.token=sqp_cff98574ffb36113e6c5e72ea46dc7707b9a3209"
 
-
             }
     }
-    
-    
-    
-    
     stage('Kubernetes Deployment - DEV') {
             steps {
               withKubeConfig([credentialsId: 'kubeconfig']) {
