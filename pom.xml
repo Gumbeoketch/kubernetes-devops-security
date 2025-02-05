@@ -49,4 +49,15 @@
 		</plugins>
 	</build>
 
+	<build>
+  <plugins>
+    <plugin>
+      <groupId>org.owasp</groupId>
+      <artifactId>dependency-check-maven</artifactId>
+      <version>8.3.1</version> <!-- or latest compatible version -->
+    </plugin>
+  </plugins>
+</build>
+
+
 </project>
