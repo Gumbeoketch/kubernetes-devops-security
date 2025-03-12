@@ -34,9 +34,10 @@ pipeline {
       }
     }
 
-    stage('Trivy Image Scan') {
+    stage('Docker Vulnerability Scan') {
       steps {
 	parallel(
+		"Trivy Scan":{
         	sh "bash trivy-docker-image-scan.sh"
 		}, 
         "OPA Conftest":{
@@ -44,6 +45,8 @@ pipeline {
     )
 	}
     }
+
+	}
 
     stage('Docker Build and Push') {
       steps {
