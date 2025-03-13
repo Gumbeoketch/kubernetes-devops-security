@@ -24,7 +24,7 @@ spec:
         name: devsecops-container
       volumeMounts:
       - mountPath: /tmp
-      name: vol
+        name: vol
         securityContext:
           runAsNonRoot: true
           runAsUser: 100
