@@ -70,6 +70,7 @@ pipeline {
 		)
 	    }
 	}
+  }
 	  
     stage('Kubernetes Deployment - DEV') {
       steps {
