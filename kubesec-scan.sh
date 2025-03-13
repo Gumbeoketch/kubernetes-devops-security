@@ -1,27 +1,34 @@
 #!/bin/bash
 
-#kubesec-scan.sh
+# Kubesec scan script
 
-# using kubesec v2 api
+# Perform a single API request and store the JSON response
 scan_result=$(curl -sSX POST --data-binary @"k8s_deployment_service.yaml" https://v2.kubesec.io/scan)
-scan_message=$(curl -sSX POST --data-binary @"k8s_deployment_service.yaml" https://v2.kubesec.io/scan | jq .[0].message -r ) 
-scan_score=$(curl -sSX POST --data-binary @"k8s_deployment_service.yaml" https://v2.kubesec.io/scan | jq .[0].score ) 
 
+# Validate if response is JSON
+if ! echo "$scan_result" | jq empty 2>/dev/null; then
+    echo "Error: Invalid JSON response from Kubesec API."
+    echo "$scan_result"
+    exit 1
+fi
 
-# using kubesec docker image for scanning
-# scan_result=$(docker run -i kubesec/kubesec:512c5e0 scan /dev/stdin < k8s_deployment_service.yaml)
-# scan_message=$(docker run -i kubesec/kubesec:512c5e0 scan /dev/stdin < k8s_deployment_service.yaml | jq .[].message -r)
-# scan_score=$(docker run -i kubesec/kubesec:512c5e0 scan /dev/stdin < k8s_deployment_service.yaml | jq .[].score)
+# Extract scan message and score
+scan_message=$(echo "$scan_result" | jq -r '.[0].message // "No message returned"')
+scan_score=$(echo "$scan_result" | jq -r '.[0].score // empty')
 
-	
-    # Kubesec scan result processing
-    # echo "Scan Score : $scan_score"
+# Check if scan_score is a valid number
+if [[ -z "$scan_score" || ! "$scan_score" =~ ^[0-9]+$ ]]; then
+    echo "Error: Failed to extract a valid scan score."
+    echo "Raw response: $scan_result"
+    exit 1
+fi
 
-	if [[ "${scan_score}" -ge 5 ]]; then
-	    echo "Score is $scan_score"
-	    echo "Kubesec Scan $scan_message"
-	else
-	    echo "Score is $scan_score, which is less than or equal to 5."
-	    echo "Scanning Kubernetes Resource has Failed"
-	    exit 1;
-	fi;
+# Kubesec scan result processing
+echo "Scan Score: $scan_score"
+
+if [[ "$scan_score" -ge 5 ]]; then
+    echo "✅ Kubesec Scan Passed: $scan_message"
+else
+    echo "❌ Scan Score is $scan_score, which is less than 5. Security check failed."
+    exit 1
+fi
