@@ -2,7 +2,7 @@ pipeline {
   agent any
 
 environment {
-	imageName = "moketch/numeric-app:"${GIT_COMMIT}"
+	imageName = "moketch/numeric-app:${GIT_COMMIT}"
 }
 
 	
