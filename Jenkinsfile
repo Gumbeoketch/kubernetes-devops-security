@@ -8,7 +8,7 @@ pipeline {
                 archive 'target/*.jar'//so that they can download
             }
         }
-    }
+    
 
     stage('Docker Build and Push') {
             steps {
@@ -20,4 +20,5 @@ pipeline {
         }
     }
 
+    }
 }      
