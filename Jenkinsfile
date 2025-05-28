@@ -11,15 +11,19 @@ pipeline {
 
     stage('Sonarqube SAST') {
             steps {
+                withSonarQubeEnv('SonarQube') {
             sh """mvn clean verify sonar:sonar \
   -Dsonar.projectKey=numeric-application \
   -Dsonar.projectName='numeric-application' \
   -Dsonar.host.url=http://13.247.185.236:9000 \
   -Dsonar.token=sqp_53d468f94ed28f306fbbf7b75270c86895e21f64"""
-
-            }
+                }
+                timeout(time: 2, unit: 'MINUTES') {
+                    script {
+                        waitForQualityGate abortPipeline: true
         }
-
+    }
+            }
 
     stage('Docker Build and Push') {
             steps {
