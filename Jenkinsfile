@@ -48,7 +48,7 @@ pipeline {
             steps {
                 withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
                     sh 'printenv'
-                    sh 'sudo docker build --platform linux/arm64 -t moketch/numeric-app:"${GIT_COMMIT}" .'
+                    sh 'sudo docker build -t moketch/numeric-app:"${GIT_COMMIT}" .'
                     sh 'docker push moketch/numeric-app:"${GIT_COMMIT}"'
             }
         }
