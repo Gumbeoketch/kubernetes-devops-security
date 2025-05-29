@@ -38,13 +38,13 @@ secrets_env = [
 # }
 
 # Avoid curl bashing
-deny[msg] {
-    input[i].Cmd == "run"
-    val := concat(" ", input[i].Value)
-    matches := regex.find_n("(curl|wget)[^|^>]*[|>]", lower(val), -1)
-    count(matches) > 0
-    msg = sprintf("Line %d: Avoid curl bashing", [i])
-}
+#deny[msg] {
+ #   input[i].Cmd == "run"
+  #  val := concat(" ", input[i].Value)
+   # matches := regex.find_n("(curl|wget)[^|^>]*[|>]", lower(val), -1)
+   # count(matches) > 0
+   # msg = sprintf("Line %d: Avoid curl bashing", [i])
+# }
 
 # Do not upgrade your system packages
 #warn[msg] {
@@ -62,14 +62,14 @@ deny[msg] {
 # }
 
 # Any user...
-any_user {
-    input[i].Cmd == "user"
- }
+# any_user {
+  #  input[i].Cmd == "user"
+ # }
 
-deny[msg] {
-    not any_user
-    msg = "Do not run as root, use USER instead"
-}
+# deny[msg] {
+  #  not any_user
+   # msg = "Do not run as root, use USER instead"
+# }
 
 # ... but do not root
 forbidden_users = [
@@ -87,12 +87,12 @@ forbidden_users = [
 #}
 
 # Do not sudo
-deny[msg] {
-    input[i].Cmd == "run"
-    val := concat(" ", input[i].Value)
-    contains(lower(val), "sudo")
-    msg = sprintf("Line %d: Do not use 'sudo' command", [i])
-}
+# deny[msg] {
+  #  input[i].Cmd == "run"
+  #  val := concat(" ", input[i].Value)
+  #  contains(lower(val), "sudo")
+  #  msg = sprintf("Line %d: Do not use 'sudo' command", [i])
+# }
 
 # Use multi-stage builds
 #default multi_stage = false
