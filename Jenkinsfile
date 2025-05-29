@@ -16,7 +16,7 @@ pipeline {
   -Dsonar.projectKey=numeric-application_2 \
   -Dsonar.projectName='numeric-application_2' \
   -Dsonar.host.url=http://13.246.61.247:9000 \
-  -Dsonar.token=sqp_340a3b1c202e1d14660242f4c2ce30208662de1d""" //this is an auth option for sonarqube
+  -Dsonar.token=sqp_340a3b1c202e1d14660242f4c2ce30208662de1d""" //this is an auth option for sonarqube #2
                 }
                 timeout(time: 2, unit: 'MINUTES') {
                     script {
