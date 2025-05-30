@@ -26,7 +26,7 @@ fi
 # Kubesec scan result processing
 echo "Scan Score: $scan_score"
 
-if [[ "$scan_score" -ge 5 ]]; then
+if [[ "$scan_score" -ge 5 ]]; then #if scan >= 5 it passes
     echo "✅ Kubesec Scan Passed: $scan_message"
 else
     echo "❌ Scan Score is $scan_score, which is less than 5. Security check failed."
