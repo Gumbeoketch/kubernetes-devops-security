@@ -79,9 +79,9 @@ pipeline {
     stage('Kubernetes Deployment - DEV') {
             steps {
                 parallel (
-                    "Deployment"
-                withKubeConfig([credentialsId: 'kubeconfig']) {
-                sh "kubectl apply -f k8s_deployment_service.yaml"
+                "Deployment": {
+                    withKubeConfig([credentialsId: 'kubeconfig']) {
+                        sh "kubectl apply -f k8s_deployment_service.yaml"
                 }
             },
 
