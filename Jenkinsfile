@@ -1,13 +1,13 @@
 pipeline {
     agent any
 
-    environment {
-        deploymentName = "devsecops"
-        containerName = "devsecops-container"
-        serviceName = "devsecops-svc"
-        imageName = "moketch/numeric-app:${GIT_COMMIT}#g"
-        applicationURL = "http://13.246.61.247"
-    }
+    // environment {
+     //  deploymentName = "devsecops"
+      //  containerName = "devsecops-container"
+       // serviceName = "devsecops-svc"
+       // imageName = "moketch/numeric-app:${GIT_COMMIT}#g"
+        // applicationURL = "http://13.246.61.247"
+    // }
 
     stages {
         stage('Build Artifact'){
@@ -76,25 +76,36 @@ pipeline {
         }
     }
 
-    stage('Kubernetes Deployment - DEV') {
-            steps {
-                parallel (
-                "Deployment": {
-                    withKubeConfig([credentialsId: 'kubeconfig']) {
-                        sh "kubectl apply -f k8s_deployment_service.yaml"
-                }
-            },
+   // stage('Kubernetes Deployment - DEV') {
+     //       steps {
+       //         parallel (
+         //       "Deployment": {
+           //         withKubeConfig([credentialsId: 'kubeconfig']) {
+            //            sh "kubectl apply -f k8s_deployment_service.yaml"
+            //    }
+           // },
 
-                "Rollout Status": {
+             //   "Rollout Status": {
+               //     withKubeConfig([credentialsId: 'kubeconfig']) {
+                //       sh "bash k8s-deployment-rollout-status.sh"
+                //  }
+            //    }
+        //    )
+     //   }
+
+   // }
+
+// }
+// }
+
+            stage('Kubernetes Deployment - DEV') {
+                steps {
                     withKubeConfig([credentialsId: 'kubeconfig']) {
-                        sh "bash k8s-deployment-rollout-status.sh"
+                        sh "sed -i 's#replace#moketch/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
+                        sh "kubectl apply -f k8s_deployment_service.yaml"
+                                }
+                            }
+                        }
                     }
                 }
-            )
-        }
-
-    }
-
-}
-}
       
