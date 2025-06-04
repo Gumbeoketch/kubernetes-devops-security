@@ -1,13 +1,13 @@
 pipeline {
     agent any
 
-    // environment {
+     environment {
      //  deploymentName = "devsecops"
       //  containerName = "devsecops-container"
-       // serviceName = "devsecops-svc"
+        serviceName = "devsecops-svc"
        // imageName = "moketch/numeric-app:${GIT_COMMIT}#g"
-        // applicationURL = "http://13.246.61.247"
-    // }
+         applicationURL = "http://13.246.61.247"
+     }
 
     stages {
         stage('Build Artifact'){
