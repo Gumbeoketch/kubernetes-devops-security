@@ -34,7 +34,7 @@ pipeline {
             }
     }
     
-   //stage('Docker Vulnerability Scan') {
+   //stage('Docker Vulnerability Dependency Scan') {
        // steps {
          //   sh "mvn dependency-check:check"
         // }
