@@ -70,7 +70,7 @@ pipeline {
     }
 
 
-    stage('Kubernetes Vulnerability Scan') {
+    stage('Kubernetes Vulnerability Scan') {  //scan for images pulled from docker hub before k8s cluster deployment
         steps {
             parallel(
                 "OPA Scan": {
