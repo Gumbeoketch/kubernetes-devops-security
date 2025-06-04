@@ -108,28 +108,32 @@ pipeline {
 // }
 // }
 
-            stage('Kubernetes Deployment - DEV') {
-                steps {
-                    withKubeConfig([credentialsId: 'kubeconfig']) {
-                        sh "sed -i 's#replace#moketch/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
-                        sh "kubectl apply -f k8s_deployment_service.yaml"
-                                }
-                            }
-                        }
-                    }
-        
-
-            stage('OWASP ZAP - DAST') {
-                steps {
-                    withKubeConfig([credentialsId: 'kubeconfig']) {
-                        sh 'bash zap.sh'
-                         }
-                     }
-
-                post {
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'owasp-zap-report', reportFiles: 'zap_report.html', reportName: 'OWASP ZAP HTML Report', reportTitles: 'OWASP ZAP HTML Report', useWrapperFileDirectly: true])
+         stage('Kubernetes Deployment - DEV') {
+            steps {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh "sed -i 's#replace#moketch/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
+                    sh "kubectl apply -f k8s_deployment_service.yaml"
                 }
             }
         }
 
-
+        stage('OWASP ZAP - DAST') {
+            steps {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh 'bash zap.sh'
+                }
+            }
+            post {
+                always {
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        reportDir: 'owasp-zap-report',
+                        reportFiles: 'zap_report.html',
+                        reportName: 'OWASP ZAP HTML Report'
+                    ])
+                }
+            }
+        }
+    }
+}
