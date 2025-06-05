@@ -18,9 +18,9 @@ echo "Scanning target: $applicationURL:$PORT"
 chmod 777 $(pwd)
 
 # ==== Run ZAP scan ====
-docker pull owasp/zap2docker-stable
+sudo docker pull owasp/zap2docker-stable
 
-docker run --rm -v $(pwd):/zap/wrk/:rw \
+sudo docker run --rm -v $(pwd):/zap/wrk/:rw \
   -t owasp/zap2docker-stable \
   zap-api-scan.py -t "$applicationURL:$PORT/v3/api-docs" \
   -f openapi -c zap_rules -r zap_report.html
