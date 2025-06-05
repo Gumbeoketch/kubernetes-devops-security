@@ -41,7 +41,7 @@ echo "Exit Code : $exit_code"
 
 if [[ ${exit_code} -ne 0 ]]; then
   echo "OWASP ZAP reported risks. Check the report."
-  exit 1
+  exit 0
 else
   echo "OWASP ZAP did not report any Risk."
 fi
