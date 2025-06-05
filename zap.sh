@@ -23,7 +23,7 @@ docker pull ghcr.io/zaproxy/zaproxy:weekly
 docker run --rm -v $(pwd):/zap/wrk/:rw \
   -t ghcr.io/zaproxy/zaproxy:weekly \
   zap-api-scan.py -t "$applicationURL:$PORT/v3/api-docs" \
-  -f openapi -c zap_rules -r zap_report.html
+  -f openapi -r zap_report.html
 
 exit_code=$?
 
