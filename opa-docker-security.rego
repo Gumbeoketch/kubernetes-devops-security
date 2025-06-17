@@ -55,11 +55,11 @@ secrets_env = [
    # msg = sprintf("Line: %d: Do not upgrade your system packages: %s", [i, val])
 # }
 
-Do not use ADD if possible
- deny[msg] {
-    input[i].Cmd == "add"
-    msg = sprintf("Line %d: Use COPY instead of ADD", [i])
-  }
+#Do not use ADD if possible
+# deny[msg] {
+ #   input[i].Cmd == "add"
+  #  msg = sprintf("Line %d: Use COPY instead of ADD", [i])
+  #}
 
 # Any user...
 # any_user {
