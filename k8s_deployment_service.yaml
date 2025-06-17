@@ -43,4 +43,4 @@ protocol: TCP
 targetPort: 8080
 selector:
 app: devsecops
-type: NodePor
+type: NodePort
