@@ -20,11 +20,11 @@ pipeline {
     stage('Sonarqube SAST') {
             steps {
                 withSonarQubeEnv('SonarQube') { //this is an auth option for sonarqube
-            sh """mvn clean verify sonar:sonar \
+            sh "mvn clean verify sonar:sonar \
   -Dsonar.projectKey=numeric-application \
   -Dsonar.projectName='numeric-application' \
   -Dsonar.host.url=http://13.246.61.247:9000 \
-  -Dsonar.token=sqp_13cd3a6118a277fa67f56a8c461abb6cbd21f990""" //this is an auth option for sonarqube #2
+  -Dsonar.token=sqp_13cd3a6118a277fa67f56a8c461abb6cbd21f990" //this is an auth option for sonarqube #2
                 }
                 timeout(time: 2, unit: 'MINUTES') {
                     script {
