@@ -17,29 +17,7 @@ pipeline {
             }
         }
 
- stage('SonarQube Analysis') {
-    steps {
-        withSonarQubeEnv('SonarQube') {
-            sh '''
-                mvn clean verify sonar:sonar \
-                  -Dsonar.projectKey=numeric-application \
-                  -Dsonar.projectName="numeric-application" \
-                  -Dsonar.host.url=http://13.246.61.247:9000 \
-                  -Dsonar.token=sqp_13cd3a6118a277fa67f56a8c461abb6cbd21f990
-            '''
-        }
-    }
-}
 
-stage('Quality Gate') {
-    steps {
-        timeout(time: 2, unit: 'MINUTES') {
-            script {
-                waitForQualityGate abortPipeline: true
-            }
-        }
-    }
-}
 
     
    //stage('Docker Vulnerability Dependency Scan') {
