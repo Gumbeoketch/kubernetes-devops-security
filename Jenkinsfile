@@ -9,6 +9,31 @@ pipeline {
          applicationURL = "http://13.246.61.247"
      }
 
+stage('Gitleaks Secret Scan') {
+    steps {
+        script {
+            sh '''
+            docker run --rm \
+              -v $(pwd):/path \
+              -v $(pwd)/.gitleaks.toml:/.gitleaks.toml \
+              zricethezav/gitleaks:latest detect \
+              --source /path \
+              --config /.gitleaks.toml \
+              --report-format json \
+              --report-path /path/gitleaks-report.json \
+              --exit-code 1
+            '''
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: 'gitleaks-report.json', allowEmptyArchive: true
+            sh 'echo "Gitleaks Report:" && cat gitleaks-report.json || echo "No report generated"'
+        }
+    }
+}
+
+    
     stages {
         stage('Build Artifact'){
             steps {
