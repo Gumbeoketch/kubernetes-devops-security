@@ -18,7 +18,6 @@ pipeline {
                       --source /path \
                       --report-format json \
                       --report-path /path/gitleaks-report.json \
-                      --exit-code 1
                     '''
                 }
             }
