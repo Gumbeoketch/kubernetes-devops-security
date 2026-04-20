@@ -31,8 +31,8 @@ stage('Gitleaks Secret Scan') {
             sh 'echo "Gitleaks Report:" && cat gitleaks-report.json || echo "No report generated"'
         }
     }
-
-    
+}
+}   
     stages {
         stage('Build Artifact'){
             steps {
