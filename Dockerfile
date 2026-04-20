@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard/jre:latest
+FROM eclipse-temurin:21-jre-jammy
 EXPOSE 8080
 ARG JAR_FILE=target/*.jar
 RUN addgroup -S pipeline && adduser -S k8s-pipeline -G pipeline
