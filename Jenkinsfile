@@ -14,10 +14,8 @@ pipeline {
                     sh '''
                     docker run --rm \
                       -v $(pwd):/path \
-                      -v $(pwd)/.gitleaks.toml:/.gitleaks.toml \
                       zricethezav/gitleaks:latest detect \
                       --source /path \
-                      --config /.gitleaks.toml \
                       --report-format json \
                       --report-path /path/gitleaks-report.json \
                       --exit-code 1
