@@ -40,8 +40,11 @@ pipeline {
         stage('Trivy SCA - Dependency Scan') {
             steps {
                 sh '''
-                    trivy fs --format template \
-                    --template "@contrib/html.tpl" \
+                    TRIVY_TEMPLATE_PATH=$(find / -path "*/contrib/html.tpl" 2>/dev/null | head -1)
+                    trivy fs \
+                    --skip-version-check \
+                    --format template \
+                    --template "@${TRIVY_TEMPLATE_PATH}" \
                     --output trivy-dependency-report.html \
                     --severity HIGH,CRITICAL \
                     --exit-code 0 \
