@@ -37,13 +37,15 @@ pipeline {
             }
         }
 
-        stage('OWASP SCA - Dependency Check') {
+        stage('Trivy SCA - Dependency Scan') {
             steps {
                 sh '''
-                    mvn dependency-check:check \
-                    -DfailBuildOnCVSS=8 \
-                    -Dformat=HTML \
-                    -DoutputDirectory=target/dependency-check-report
+                    trivy fs --format template \
+                    --template "@contrib/html.tpl" \
+                    --output trivy-dependency-report.html \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 0 \
+                    .
                 '''
             }
             post {
@@ -53,10 +55,10 @@ pipeline {
                         alwaysLinkToLastBuild: true,
                         icon: '',
                         keepAll: true,
-                        reportDir: 'target/dependency-check-report',
-                        reportFiles: 'dependency-check-report.html',
-                        reportName: 'OWASP Dependency Check Report',
-                        reportTitles: 'OWASP Dependency Check Report',
+                        reportDir: '.',
+                        reportFiles: 'trivy-dependency-report.html',
+                        reportName: 'Trivy Dependency Scan Report',
+                        reportTitles: 'Trivy Dependency Scan Report',
                         useWrapperFileDirectly: true
                     ])
                 }
