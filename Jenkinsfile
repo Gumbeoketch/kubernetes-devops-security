@@ -37,6 +37,32 @@ pipeline {
             }
         }
 
+        stage('OWASP SCA - Dependency Check') {
+            steps {
+                sh '''
+                    mvn dependency-check:check \
+                    -DfailBuildOnCVSS=8 \
+                    -Dformat=HTML \
+                    -DoutputDirectory=target/dependency-check-report
+                '''
+            }
+            post {
+                always {
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        icon: '',
+                        keepAll: true,
+                        reportDir: 'target/dependency-check-report',
+                        reportFiles: 'dependency-check-report.html',
+                        reportName: 'OWASP Dependency Check Report',
+                        reportTitles: 'OWASP Dependency Check Report',
+                        useWrapperFileDirectly: true
+                    ])
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
