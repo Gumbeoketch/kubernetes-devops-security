@@ -40,11 +40,11 @@ pipeline {
         stage('Trivy SCA - Dependency Scan') {
             steps {
                 sh '''
-                    TRIVY_TEMPLATE_PATH=$(find / -path "*/contrib/html.tpl" 2>/dev/null | head -1)
+                    curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o trivy-html.tpl
                     trivy fs \
                     --skip-version-check \
                     --format template \
-                    --template "@${TRIVY_TEMPLATE_PATH}" \
+                    --template "@trivy-html.tpl" \
                     --output trivy-dependency-report.html \
                     --severity HIGH,CRITICAL \
                     --exit-code 0 \
