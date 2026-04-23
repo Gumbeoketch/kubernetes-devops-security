@@ -13,6 +13,7 @@ pipeline {
                 script {
                     sh '''
                     docker run --rm \
+                      -u $(id -u):$(id -g) \
                       -v $(pwd):/path \
                       zricethezav/gitleaks:latest detect \
                       --source /path \
@@ -26,7 +27,6 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: 'gitleaks-report.json', allowEmptyArchive: true
-                    sh 'echo "Gitleaks Report:" && cat gitleaks-report.json || echo "No report generated"'
                 }
             }
         }
