@@ -17,7 +17,7 @@ pipeline {
                       -v $(pwd):/path \
                       zricethezav/gitleaks:latest detect \
                       --source /path \
-                      --no-config \
+                      --config /dev/null \
                       --report-format json \
                       --report-path /path/gitleaks-report.json \
                       --exit-code 0
