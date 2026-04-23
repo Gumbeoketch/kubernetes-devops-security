@@ -77,7 +77,8 @@ pipeline {
                                 -DfailBuildOnCVSS=8 \
                                 -Dformat=HTML \
                                 -DoutputDirectory=target/dependency-check-report \
-                                -DnvdApiKey=$NVD_API_KEY
+                                -DnvdApiKey=$NVD_API_KEY \
+                                -DnvdApiDelay=6000
                             '''
                         }
                     }
