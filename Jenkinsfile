@@ -84,7 +84,11 @@ pipeline {
                                 --nvdApiKey $NVD_API_KEY \
                                 --nvdApiDelay 10000 \
                                 --failOnCVSS 8 \
-                                --enableRetired
+                                --enableRetired \
+                                --disableCentral \
+                                --disableOssIndex \
+                                --disableNodeJS \
+                                --disableNodeAudit
                             '''
                         }
                     }
