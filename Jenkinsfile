@@ -12,8 +12,8 @@ pipeline {
             steps {
                 script {
                     sh '''
+                    chmod 777 $(pwd)
                     docker run --rm \
-                      -u $(id -u):$(id -g) \
                       -v $(pwd):/path \
                       zricethezav/gitleaks:latest detect \
                       --source /path \
