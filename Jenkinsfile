@@ -37,33 +37,65 @@ pipeline {
             }
         }
 
-        stage('Trivy SCA - Dependency Scan') {
-            steps {
-                sh '''
-                    curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o trivy-html.tpl
-                    trivy fs \
-                    --skip-version-check \
-                    --format template \
-                    --template "@trivy-html.tpl" \
-                    --output trivy-dependency-report.html \
-                    --severity HIGH,CRITICAL \
-                    --exit-code 0 \
-                    .
-                '''
-            }
-            post {
-                always {
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        icon: '',
-                        keepAll: true,
-                        reportDir: '.',
-                        reportFiles: 'trivy-dependency-report.html',
-                        reportName: 'Trivy Dependency Scan Report',
-                        reportTitles: 'Trivy Dependency Scan Report',
-                        useWrapperFileDirectly: true
-                    ])
+        stage('SCA - Dependency Scan') {
+            parallel {
+                stage('Trivy SCA') {
+                    steps {
+                        sh '''
+                            curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o trivy-html.tpl
+                            trivy fs \
+                            --skip-version-check \
+                            --format template \
+                            --template "@trivy-html.tpl" \
+                            --output trivy-dependency-report.html \
+                            --severity HIGH,CRITICAL \
+                            --exit-code 0 \
+                            .
+                        '''
+                    }
+                    post {
+                        always {
+                            publishHTML([
+                                allowMissing: true,
+                                alwaysLinkToLastBuild: true,
+                                icon: '',
+                                keepAll: true,
+                                reportDir: '.',
+                                reportFiles: 'trivy-dependency-report.html',
+                                reportName: 'Trivy Dependency Scan Report',
+                                reportTitles: 'Trivy Dependency Scan Report',
+                                useWrapperFileDirectly: true
+                            ])
+                        }
+                    }
+                }
+                stage('OWASP SCA') {
+                    steps {
+                        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
+                            sh '''
+                                mvn dependency-check:check \
+                                -DfailBuildOnCVSS=8 \
+                                -Dformat=HTML \
+                                -DoutputDirectory=target/dependency-check-report \
+                                -DnvdApiKey=$NVD_API_KEY
+                            '''
+                        }
+                    }
+                    post {
+                        always {
+                            publishHTML([
+                                allowMissing: true,
+                                alwaysLinkToLastBuild: true,
+                                icon: '',
+                                keepAll: true,
+                                reportDir: 'target/dependency-check-report',
+                                reportFiles: 'dependency-check-report.html',
+                                reportName: 'OWASP Dependency Check Report',
+                                reportTitles: 'OWASP Dependency Check Report',
+                                useWrapperFileDirectly: true
+                            ])
+                        }
+                    }
                 }
             }
         }
