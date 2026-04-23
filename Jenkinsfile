@@ -73,12 +73,17 @@ pipeline {
                     steps {
                         withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
                             sh '''
-                                mvn dependency-check:check \
-                                -DfailBuildOnCVSS=8 \
-                                -Dformat=HTML \
-                                -DoutputDirectory=target/dependency-check-report \
-                                -DnvdApiKey=$NVD_API_KEY \
-                                -DnvdApiDelay=6000
+                                docker run --rm \
+                                -v $(pwd):/src \
+                                -v $(pwd)/owasp-dc-report:/report \
+                                owasp/dependency-check:latest \
+                                --scan /src \
+                                --format HTML \
+                                --out /report \
+                                --nvdApiKey $NVD_API_KEY \
+                                --nvdApiDelay 10000 \
+                                --failOnCVSS 8 \
+                                --enableRetired
                             '''
                         }
                     }
@@ -89,7 +94,7 @@ pipeline {
                                 alwaysLinkToLastBuild: true,
                                 icon: '',
                                 keepAll: true,
-                                reportDir: 'target/dependency-check-report',
+                                reportDir: 'owasp-dc-report',
                                 reportFiles: 'dependency-check-report.html',
                                 reportName: 'OWASP Dependency Check Report',
                                 reportTitles: 'OWASP Dependency Check Report',
