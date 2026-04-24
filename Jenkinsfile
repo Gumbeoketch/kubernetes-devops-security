@@ -73,27 +73,20 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'snyk-api-token', variable: 'SNYK_TOKEN')]) {
                     sh '''
-                        docker run --rm \
-                        -e SNYK_TOKEN=$SNYK_TOKEN \
-                        -v $(pwd):/project \
-                        snyk/snyk:maven \
-                        snyk test \
+                        curl -sSfL https://static.snyk.io/cli/latest/snyk-linux-arm64 -o /tmp/snyk
+                        chmod +x /tmp/snyk
+
+                        /tmp/snyk auth $SNYK_TOKEN
+
+                        /tmp/snyk test \
                         --all-projects \
                         --severity-threshold=high \
                         --json > snyk-report.json || true
 
-                        docker run --rm \
-                        -e SNYK_TOKEN=$SNYK_TOKEN \
-                        -v $(pwd):/project \
-                        snyk/snyk:maven \
-                        snyk monitor \
-                        --all-projects
+                        /tmp/snyk monitor --all-projects || true
 
-                        docker run --rm \
-                        -v $(pwd):/project \
-                        -w /project \
-                        node:alpine \
-                        sh -c "npm install -g snyk-to-html && snyk-to-html -i /project/snyk-report.json -o /project/snyk-report.html"
+                        npm install -g snyk-to-html 2>/dev/null || true
+                        snyk-to-html -i snyk-report.json -o snyk-report.html || true
                     '''
                 }
             }
