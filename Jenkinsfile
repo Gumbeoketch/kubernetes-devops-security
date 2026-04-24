@@ -76,9 +76,8 @@ pipeline {
                             sh '''
                                 docker run --rm \
                                 -v /var/lib/jenkins/.m2/repository/org/owasp/dependency-check-data/9.0:/data \
-                                --entrypoint chmod \
-                                owasp/dependency-check:latest \
-                                -R 777 /data
+                                alpine \
+                                chmod -R 777 /data
                                 docker run --rm \
                                 -v $(pwd):/src \
                                 -v $(pwd)/owasp-dc-report:/report \
@@ -95,7 +94,10 @@ pipeline {
                                 --disableOssIndex \
                                 --disableNodeJS \
                                 --disableNodeAudit
-                                chmod -R 777 $(pwd)/owasp-dc-report
+                                docker run --rm \
+                                -v $(pwd)/owasp-dc-report:/report \
+                                alpine \
+                                chmod -R 777 /report
                             '''
                         }
                     }
