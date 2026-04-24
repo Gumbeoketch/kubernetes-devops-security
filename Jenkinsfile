@@ -74,13 +74,11 @@ pipeline {
                     steps {
                         withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
                             sh '''
-                                chmod -R 777 /var/lib/jenkins/.m2/repository/org/owasp/dependency-check-data/9.0
                                 docker run --rm \
-                                -v $(pwd):/src \
-                                -v $(pwd)/owasp-dc-report:/report \
-                                -v /var/lib/jenkins/.m2/repository/org/owasp/dependency-check-data/9.0:/usr/share/dependency-check/data \
+                                -v /var/lib/jenkins/.m2/repository/org/owasp/dependency-check-data/9.0:/data \
+                                --entrypoint chmod \
                                 owasp/dependency-check:latest \
-                                --purge
+                                -R 777 /data
                                 docker run --rm \
                                 -v $(pwd):/src \
                                 -v $(pwd)/owasp-dc-report:/report \
