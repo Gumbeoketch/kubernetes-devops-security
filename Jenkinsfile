@@ -71,43 +71,16 @@ pipeline {
 
         stage('Snyk - Open Source Scan') {
             steps {
-                withCredentials([string(credentialsId: 'snyk-api-token', variable: 'SNYK_TOKEN')]) {
-                    sh '''
-                        curl -sSfL https://static.snyk.io/cli/latest/snyk-linux-arm64 -o /tmp/snyk
-                        chmod +x /tmp/snyk
-
-                        /tmp/snyk auth $SNYK_TOKEN
-
-                        /tmp/snyk test \
-                        --all-projects \
-                        --severity-threshold=high \
-                        --org=f0205332-5e84-401b-9cd9-0c6292a58be4 \
-                        --json > snyk-report.json || true
-
-                        /tmp/snyk monitor \
-                        --all-projects \
-                        --org=f0205332-5e84-401b-9cd9-0c6292a58be4 || true
-
-                        npm install -g snyk-to-html 2>/dev/null || true
-                        snyk-to-html -i snyk-report.json -o snyk-report.html || true
-                    '''
-                }
-            }
-            post {
-                always {
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        icon: '',
-                        keepAll: true,
-                        reportDir: '.',
-                        reportFiles: 'snyk-report.html',
-                        reportName: 'Snyk Open Source Report',
-                        reportTitles: 'Snyk Open Source Report',
-                        useWrapperFileDirectly: true
-                    ])
-                    archiveArtifacts artifacts: 'snyk-report.json', allowEmptyArchive: true
-                }
+                snykSecurity(
+                    snykInstallation: 'snyk',
+                    snykTokenId: 'snyk-api-token',
+                    organisation: 'f0205332-5e84-401b-9cd9-0c6292a58be4',
+                    projectName: 'numeric-application',
+                    severity: 'high',
+                    failOnIssues: false,
+                    monitorProjectOnBuild: true,
+                    additionalArguments: '--all-projects'
+                )
             }
         }
 
