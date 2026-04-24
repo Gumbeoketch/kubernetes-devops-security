@@ -38,7 +38,7 @@ pipeline {
             }
         }
 
-        stage('SCA - Dependency Scan') {
+        stage('Trivy SCA - Dependency Scan') {
             steps {
                 sh '''
                     curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o trivy-html.tpl
