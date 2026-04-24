@@ -97,6 +97,7 @@ pipeline {
                                 --disableOssIndex \
                                 --disableNodeJS \
                                 --disableNodeAudit
+                                chmod -R 777 $(pwd)/owasp-dc-report
                             '''
                         }
                     }
