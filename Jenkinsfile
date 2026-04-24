@@ -69,6 +69,50 @@ pipeline {
             }
         }
 
+        stage('Snyk - Open Source Scan') {
+            steps {
+                withCredentials([string(credentialsId: 'snyk-api-token', variable: 'SNYK_TOKEN')]) {
+                    sh '''
+                        docker run --rm \
+                        -e SNYK_TOKEN=$SNYK_TOKEN \
+                        -v $(pwd):/project \
+                        snyk/snyk:maven \
+                        snyk test \
+                        --all-projects \
+                        --severity-threshold=high \
+                        --json-file-output=/project/snyk-report.json \
+                        || true
+                    '''
+                }
+            }
+            post {
+                always {
+                    sh '''
+                        docker run --rm \
+                        -e SNYK_TOKEN=$SNYK_TOKEN \
+                        -v $(pwd):/project \
+                        snyk/snyk:maven \
+                        snyk-to-html \
+                        -i /project/snyk-report.json \
+                        -o /project/snyk-report.html \
+                        || true
+                    '''
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        icon: '',
+                        keepAll: true,
+                        reportDir: '.',
+                        reportFiles: 'snyk-report.html',
+                        reportName: 'Snyk Open Source Report',
+                        reportTitles: 'Snyk Open Source Report',
+                        useWrapperFileDirectly: true
+                    ])
+                    archiveArtifacts artifacts: 'snyk-report.json', allowEmptyArchive: true
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
