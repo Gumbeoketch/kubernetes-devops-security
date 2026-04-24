@@ -39,83 +39,32 @@ pipeline {
         }
 
         stage('SCA - Dependency Scan') {
-            parallel {
-                stage('Trivy SCA') {
-                    steps {
-                        sh '''
-                            curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o trivy-html.tpl
-                            trivy fs \
-                            --skip-version-check \
-                            --format template \
-                            --template "@trivy-html.tpl" \
-                            --output trivy-dependency-report.html \
-                            --severity HIGH,CRITICAL \
-                            --exit-code 0 \
-                            .
-                        '''
-                    }
-                    post {
-                        always {
-                            publishHTML([
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                icon: '',
-                                keepAll: true,
-                                reportDir: '.',
-                                reportFiles: 'trivy-dependency-report.html',
-                                reportName: 'Trivy Dependency Scan Report',
-                                reportTitles: 'Trivy Dependency Scan Report',
-                                useWrapperFileDirectly: true
-                            ])
-                        }
-                    }
-                }
-                stage('OWASP SCA') {
-                    steps {
-                        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-                            sh '''
-                                docker run --rm \
-                                -v /var/lib/jenkins/.m2/repository/org/owasp/dependency-check-data/9.0:/data \
-                                alpine \
-                                chmod -R 777 /data
-                                docker run --rm \
-                                -v $(pwd):/src \
-                                -v $(pwd)/owasp-dc-report:/report \
-                                -v /var/lib/jenkins/.m2/repository/org/owasp/dependency-check-data/9.0:/usr/share/dependency-check/data \
-                                owasp/dependency-check:9.1.0 \
-                                --scan /src \
-                                --format HTML \
-                                --out /report \
-                                --nvdApiKey $NVD_API_KEY \
-                                --nvdApiDelay 6000 \
-                                --failOnCVSS 8 \
-                                --enableRetired \
-                                --disableCentral \
-                                --disableOssIndex \
-                                --disableNodeJS \
-                                --disableNodeAudit
-                                docker run --rm \
-                                -v $(pwd)/owasp-dc-report:/report \
-                                alpine \
-                                chmod -R 777 /report
-                            '''
-                        }
-                    }
-                    post {
-                        always {
-                            publishHTML([
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                icon: '',
-                                keepAll: true,
-                                reportDir: 'owasp-dc-report',
-                                reportFiles: 'dependency-check-report.html',
-                                reportName: 'OWASP Dependency Check Report',
-                                reportTitles: 'OWASP Dependency Check Report',
-                                useWrapperFileDirectly: true
-                            ])
-                        }
-                    }
+            steps {
+                sh '''
+                    curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o trivy-html.tpl
+                    trivy fs \
+                    --skip-version-check \
+                    --format template \
+                    --template "@trivy-html.tpl" \
+                    --output trivy-dependency-report.html \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 0 \
+                    .
+                '''
+            }
+            post {
+                always {
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        icon: '',
+                        keepAll: true,
+                        reportDir: '.',
+                        reportFiles: 'trivy-dependency-report.html',
+                        reportName: 'Trivy Dependency Scan Report',
+                        reportTitles: 'Trivy Dependency Scan Report',
+                        useWrapperFileDirectly: true
+                    ])
                 }
             }
         }
