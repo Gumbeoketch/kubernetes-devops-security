@@ -80,11 +80,17 @@ pipeline {
                                 -v $(pwd)/owasp-dc-report:/report \
                                 -v /var/lib/jenkins/.m2/repository/org/owasp/dependency-check-data/9.0:/usr/share/dependency-check/data \
                                 owasp/dependency-check:latest \
+                                --purge
+                                docker run --rm \
+                                -v $(pwd):/src \
+                                -v $(pwd)/owasp-dc-report:/report \
+                                -v /var/lib/jenkins/.m2/repository/org/owasp/dependency-check-data/9.0:/usr/share/dependency-check/data \
+                                owasp/dependency-check:latest \
                                 --scan /src \
                                 --format HTML \
                                 --out /report \
                                 --nvdApiKey $NVD_API_KEY \
-                                --noupdate \
+                                --nvdApiDelay 6000 \
                                 --failOnCVSS 8 \
                                 --enableRetired \
                                 --disableCentral \
