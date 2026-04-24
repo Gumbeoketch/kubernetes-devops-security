@@ -80,23 +80,25 @@ pipeline {
                         snyk test \
                         --all-projects \
                         --severity-threshold=high \
-                        --json-file-output=/project/snyk-report.json \
-                        || true
+                        --json > snyk-report.json || true
+
+                        docker run --rm \
+                        -e SNYK_TOKEN=$SNYK_TOKEN \
+                        -v $(pwd):/project \
+                        snyk/snyk:maven \
+                        snyk monitor \
+                        --all-projects
+
+                        docker run --rm \
+                        -v $(pwd):/project \
+                        -w /project \
+                        node:alpine \
+                        sh -c "npm install -g snyk-to-html && snyk-to-html -i /project/snyk-report.json -o /project/snyk-report.html"
                     '''
                 }
             }
             post {
                 always {
-                    sh '''
-                        docker run --rm \
-                        -e SNYK_TOKEN=$SNYK_TOKEN \
-                        -v $(pwd):/project \
-                        snyk/snyk:maven \
-                        snyk-to-html \
-                        -i /project/snyk-report.json \
-                        -o /project/snyk-report.html \
-                        || true
-                    '''
                     publishHTML([
                         allowMissing: true,
                         alwaysLinkToLastBuild: true,
