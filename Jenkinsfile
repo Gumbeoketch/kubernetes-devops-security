@@ -71,17 +71,15 @@ pipeline {
 
         stage('Snyk - Open Source Scan') {
             steps {
-                withCredentials([string(credentialsId: 'snyk-api-token', variable: 'SNYK_TOKEN')]) {
-                    sh '''
-                        /usr/local/bin/snyk-alpine test \
-                        --all-projects \
-                        --org=f0205332-5e84-401b-9cd9-0c6292a58be4 || true
+                sh '''
+                    /usr/local/bin/snyk-alpine test \
+                    --all-projects \
+                    --org=f0205332-5e84-401b-9cd9-0c6292a58be4 || true
 
-                        /usr/local/bin/snyk-alpine monitor \
-                        --all-projects \
-                        --org=f0205332-5e84-401b-9cd9-0c6292a58be4 || true
-                    '''
-                }
+                    /usr/local/bin/snyk-alpine monitor \
+                    --all-projects \
+                    --org=f0205332-5e84-401b-9cd9-0c6292a58be4 || true
+                '''
             }
             post {
                 always {
