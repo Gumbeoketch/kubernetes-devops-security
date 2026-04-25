@@ -74,11 +74,13 @@ pipeline {
                 sh '''
                     /usr/local/bin/snyk-alpine test \
                     --all-projects \
-                    --org=f0205332-5e84-401b-9cd9-0c6292a58be4 || true
+                    --org=f0205332-5e84-401b-9cd9-0c6292a58be4 \
+                    --exclude=trivy || true
 
                     /usr/local/bin/snyk-alpine monitor \
                     --all-projects \
-                    --org=f0205332-5e84-401b-9cd9-0c6292a58be4 || true
+                    --org=f0205332-5e84-401b-9cd9-0c6292a58be4 \
+                    --exclude=trivy || true
                 '''
             }
             post {
