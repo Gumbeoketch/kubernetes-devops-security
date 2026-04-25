@@ -79,7 +79,7 @@ pipeline {
                         --all-projects \
                         --severity-threshold=high \
                         --org=f0205332-5e84-401b-9cd9-0c6292a58be4 \
-                        --json > snyk-report.json || true
+                        --json 2>/dev/null > snyk-report.json || true
 
                         /usr/local/bin/snyk-alpine monitor \
                         --all-projects \
