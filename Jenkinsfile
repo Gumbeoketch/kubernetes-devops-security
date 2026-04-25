@@ -71,16 +71,26 @@ pipeline {
 
         stage('Snyk - Open Source Scan') {
             steps {
-                snykSecurity(
-                    snykInstallation: 'snyk',
-                    snykTokenId: 'snyk-api-token',
-                    organisation: 'f0205332-5e84-401b-9cd9-0c6292a58be4',
-                    projectName: 'numeric-application',
-                    severity: 'high',
-                    failOnIssues: false,
-                    monitorProjectOnBuild: true,
-                    additionalArguments: '--all-projects'
-                )
+                withCredentials([string(credentialsId: 'snyk-api-token', variable: 'SNYK_TOKEN')]) {
+                    sh '''
+                        /usr/local/bin/snyk-alpine auth $SNYK_TOKEN
+
+                        /usr/local/bin/snyk-alpine test \
+                        --all-projects \
+                        --severity-threshold=high \
+                        --org=f0205332-5e84-401b-9cd9-0c6292a58be4 \
+                        --json > snyk-report.json || true
+
+                        /usr/local/bin/snyk-alpine monitor \
+                        --all-projects \
+                        --org=f0205332-5e84-401b-9cd9-0c6292a58be4 || true
+                    '''
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'snyk-report.json', allowEmptyArchive: true
+                }
             }
         }
 
