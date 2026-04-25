@@ -73,13 +73,9 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'snyk-api-token', variable: 'SNYK_TOKEN')]) {
                     sh '''
-                        /usr/local/bin/snyk-alpine auth $SNYK_TOKEN
-
                         /usr/local/bin/snyk-alpine test \
                         --all-projects \
-                        --severity-threshold=high \
-                        --org=f0205332-5e84-401b-9cd9-0c6292a58be4 \
-                        --json 2>/dev/null > snyk-report.json || true
+                        --org=f0205332-5e84-401b-9cd9-0c6292a58be4 || true
 
                         /usr/local/bin/snyk-alpine monitor \
                         --all-projects \
